@@ -1,0 +1,11 @@
+{
+  "name": "node-cms",
+  "version": "0.0.0",
+  "description": "A follow along project from an Udemy classes 'content management systems' section.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
