@@ -7,4 +7,8 @@ The course does not exhibit best practices nor does it include testing. I've cha
 
 ## Getting Started
 
+1. run `npm install`
+2. run `npm start`
+3. visit `localhost:3000`
+
 ## Tests
