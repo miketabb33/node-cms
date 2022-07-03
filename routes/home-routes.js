@@ -1,20 +1,25 @@
 const express = require('express')
 const router = express.Router()
 
+router.all('/*', (req, res, next) => {
+  req.app.locals.layout = 'home-layout'
+  next()
+})
+
 router.get('/', (req, res) => {
-  res.render('pages/index')
+  res.render('home/index')
 })
 
 router.get('/about', (req, res) => {
-  res.render('pages/about')
+  res.render('home/about')
 })
 
 router.get('/login', (req, res) => {
-  res.render('pages/login')
+  res.render('home/login')
 })
 
 router.get('/register', (req, res) => {
-  res.render('pages/register')
+  res.render('home/register')
 })
 
 module.exports = router

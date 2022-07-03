@@ -13,8 +13,8 @@ const handlebars = expHbs.create({
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
-const homeRoutes = require('./routes/home-routes.js')
-app.use('/', homeRoutes)
+app.use('/', require('./routes/home-routes.js'))
+app.use('/admin', require('./routes/admin-routes.js'))
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)
