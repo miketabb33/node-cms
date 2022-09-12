@@ -8,6 +8,8 @@ const bodyParser = require('body-parser')
 const hbsHelperMap = require('./hbsHelpers/hbsHelperMap')
 const methodOverride = require('method-override')
 const fileUpload = require('express-fileupload')
+const session = require('express-session')
+const flash = require('connect-flash')
 
 const connectToDatabase = () => {
   console.log('Connecting to database...')
@@ -24,6 +26,17 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(methodOverride('_method'))
 app.use(fileUpload())
+app.use(session({
+  secret: 'anysecret',
+  resave: true,
+  saveUninitialized: true
+}))
+
+app.use(flash())
+app.use((req, res, next) => {
+  res.locals.success_message = req.flash('success_message')
+  next()
+})
 
 const handlebars = expHbs.create({
   defaultLayout: 'home-layout',

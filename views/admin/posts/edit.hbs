@@ -1,6 +1,6 @@
 <h1>Edit Post</h1>
 
-<form action="/admin/posts/edit/{{post._id}}?_method=PUT" method="post">
+<form action="/admin/posts/edit/{{post._id}}?_method=PUT" method="post" enctype="multipart/form-data">
   <div class="form-group">
     <label for="title">Title</label>
     <input name="title" type="text" class="form-control" id="title" placeholder="Enter Title" value="{{post.title}}" />
@@ -48,5 +48,10 @@
     </select>
   </div>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <div class="form-group">
+    <label for="file">File Upload</label>
+    <input name="file" type="file" class="form-control" />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Update Post</button>
 </form>

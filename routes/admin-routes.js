@@ -2,6 +2,7 @@ const express = require('express')
 const Post = require('../models/Post')
 const faker = require('@faker-js/faker').faker
 const router = express.Router()
+const { removeAllUploads } = require('../core/imageUploader')
 
 router.all('/*', (req, res, next) => {
   req.app.locals.layout = 'admin-layout'
@@ -11,7 +12,6 @@ router.all('/*', (req, res, next) => {
 router.get('/', (req, res) => {
   res.render('admin/index')
 })
-
 
 router.post('/fake-posts', (req, res) => {
   for(let i = 0; i < req.body.amount; i++) {
@@ -34,6 +34,8 @@ router.post('/fake-posts', (req, res) => {
 })
 
 router.delete('/fake-posts', (req, res) => {
+  removeAllUploads()
+
   Post.remove({})
   .then(_ => {
     res.redirect('/admin/posts')

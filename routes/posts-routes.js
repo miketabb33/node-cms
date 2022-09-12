@@ -1,16 +1,19 @@
 const express = require('express')
 const Post = require('../models/Post')
 const router = express.Router()
+const { uploadDir, uploadFileUnlessNull, removeFile } = require('../core/imageUploader')
 
-const uploadFileUnlessNull = (file) => {
-  let fileName = null
-  if (file) {
-    fileName = Date.now() + '-' + file.name
-    file.mv('./public/uploads/' + fileName, (err) => {
-      if (err) throw err
-    })
+const validateCreate = (body) => {
+  const errors = []
+  if (!body.title) {
+    errors.push({ message: "Please enter a title"})
   }
-  return fileName
+
+  if (!body.body) {
+    errors.push({ message: "Please enter a body"})
+  }
+
+  return errors
 }
 
 router.get('/', (req, res) => {
@@ -28,19 +31,26 @@ router.get('/create', (req, res) => {
 })
 
 router.post('/create', (req, res) => {
-  const title = req.body.title
-  const body = req.body.body
-  const status = req.body.status
-  const allowComments = req.body.allowComments == 'on'
-  const fileName = uploadFileUnlessNull(req.files?.file)
+  const validationErrors = validateCreate(req.body)
 
-  Post.create({title, body, status, allowComments, fileName})
-    .then(_ => {
-      res.redirect('/admin/posts')
-    })
-    .catch(err => {
-      res.send(err)
-    })
+  if (validationErrors.length == 0) {
+    const title = req.body.title
+    const body = req.body.body
+    const status = req.body.status
+    const allowComments = req.body.allowComments == 'on'
+    const fileName = uploadFileUnlessNull(req.files?.file)
+  
+    Post.create({title, body, status, allowComments, fileName})
+      .then(_ => {
+        req.flash('success_message', 'Post was created successfuly: ' + title)
+        res.redirect('/admin/posts')
+      })
+      .catch(err => {
+        res.send(err)
+      })
+  } else {
+    res.render('admin/posts/create', {errors: validationErrors})
+  }
 })
 
 router.get('/edit/:id', (req, res) => {
@@ -57,15 +67,17 @@ router.get('/edit/:id', (req, res) => {
 router.put('/edit/:id', (req, res) => {
   Post.findById(req.params.id)
     .then(post => {
-      console.log(post)
-
       post.title = req.body.title
       post.body = req.body.body
       post.status = req.body.status
       post.allowComments = req.body.allowComments == 'on'
 
+      removeFile(post.fileName)
+      post.fileName = uploadFileUnlessNull(req.files?.file)
+
       post.save()
       .then(updatedPost => {
+        req.flash('success_message', 'Post was updated successfuly: ' + post.title)
         res.redirect('/admin/posts')
       })
       .catch(err => {
@@ -79,9 +91,18 @@ router.put('/edit/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  Post.remove({_id: req.params.id})
-  .then(_ => {
-    res.redirect('/admin/posts')
+  console.log(uploadDir)
+  Post.findById(req.params.id)
+  .then(post => {
+    removeFile(post.fileName)
+    post.remove()
+    .then(_ => {
+      req.flash('success_message', 'Post was updated deleted: ' + post.title)
+      res.redirect('/admin/posts')
+    })
+    .catch(err => {
+      console.log(err)
+    })
   })
 })
 
