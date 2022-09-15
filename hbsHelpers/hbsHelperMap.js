@@ -1,5 +1,6 @@
-const { ifEquals } = require('./utils')
+const { ifEquals, formatDate } = require('./utils')
 
 module.exports = {
-  ifEquals
+  ifEquals,
+  formatDate
 }

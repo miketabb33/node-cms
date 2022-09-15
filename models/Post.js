@@ -23,6 +23,11 @@ const PostSchema = mongoose.Schema({
 
   fileName: {
     type: String
+  },
+
+  date: {
+    type: Date,
+    default: Date.now()
   }
 })
 

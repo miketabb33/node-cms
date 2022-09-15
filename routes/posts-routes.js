@@ -19,7 +19,7 @@ const validateCreate = (body) => {
 router.get('/', (req, res) => {
   Post.find({}).lean()
     .then(posts => {
-      res.render('admin/posts/index', { posts: posts})
+      res.render('admin/posts/index', { posts: posts })
     })
     .catch(err => {
       res.send('Cant find posts')
@@ -39,8 +39,9 @@ router.post('/create', (req, res) => {
     const status = req.body.status
     const allowComments = req.body.allowComments == 'on'
     const fileName = uploadFileUnlessNull(req.files?.file)
+    const date = Date.now()
   
-    Post.create({title, body, status, allowComments, fileName})
+    Post.create({title, body, status, allowComments, fileName, date})
       .then(_ => {
         req.flash('success_message', 'Post was created successfuly: ' + title)
         res.redirect('/admin/posts')
@@ -71,9 +72,12 @@ router.put('/edit/:id', (req, res) => {
       post.body = req.body.body
       post.status = req.body.status
       post.allowComments = req.body.allowComments == 'on'
+      post.date = Date.now()
 
-      removeFile(post.fileName)
-      post.fileName = uploadFileUnlessNull(req.files?.file)
+      if (req.files?.file) {
+        removeFile(post.fileName)
+        post.fileName = uploadFileUnlessNull(req.files?.file)
+      }
 
       post.save()
       .then(updatedPost => {
