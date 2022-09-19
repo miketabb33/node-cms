@@ -1,7 +1,7 @@
 const express = require('express')
 const Post = require('../models/Post')
 const router = express.Router()
-const { uploadDir, uploadFileUnlessNull, removeFile } = require('../core/imageUploader')
+const { uploadFileUnlessNull, removeFile } = require('../core/imageUploader')
 
 const validateCreate = (body) => {
   const errors = []
@@ -95,7 +95,6 @@ router.put('/edit/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  console.log(uploadDir)
   Post.findById(req.params.id)
   .then(post => {
     removeFile(post.fileName)

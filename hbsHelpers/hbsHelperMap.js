@@ -1,6 +1,7 @@
-const { ifEquals, formatDate } = require('./utils')
+const { ifEquals, formatDate, getImageUrl } = require('./utils')
 
 module.exports = {
   ifEquals,
-  formatDate
+  formatDate,
+  getImageUrl
 }

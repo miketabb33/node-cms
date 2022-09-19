@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const uploadDir = __dirname + "/../public/uploads/"
+
 const uploadFileUnlessNull = (file) => {
   let fileName = null
   if (file) {
@@ -44,4 +45,4 @@ const removeFile = (fileName) => {
 }
 
 
-module.exports = {uploadDir, uploadFileUnlessNull, removeAllUploads, removeFile}
+module.exports = {uploadFileUnlessNull, removeAllUploads, removeFile}
