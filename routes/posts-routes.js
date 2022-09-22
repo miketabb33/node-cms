@@ -1,5 +1,6 @@
 const express = require('express')
 const Post = require('../models/Post')
+const Category = require('../models/Category')
 const router = express.Router()
 const { uploadFileUnlessNull, removeFile } = require('../core/imageUploader')
 
@@ -17,17 +18,21 @@ const validateCreate = (body) => {
 }
 
 router.get('/', (req, res) => {
-  Post.find({}).lean()
+  Post.find({}).populate('category').lean()
     .then(posts => {
       res.render('admin/posts/index', { posts: posts })
     })
     .catch(err => {
+      console.log(err)
       res.send('Cant find posts')
     })  
 })
 
 router.get('/create', (req, res) => {
-  res.render('admin/posts/create')
+  Category.find({}).lean()
+  .then(categories => {
+    res.render('admin/posts/create', {categories})
+  })
 })
 
 router.post('/create', (req, res) => {
@@ -39,9 +44,10 @@ router.post('/create', (req, res) => {
     const status = req.body.status
     const allowComments = req.body.allowComments == 'on'
     const fileName = uploadFileUnlessNull(req.files?.file)
+    const category = req.body.category
     const date = Date.now()
   
-    Post.create({title, body, status, allowComments, fileName, date})
+    Post.create({title, body, status, allowComments, fileName, category, date})
       .then(_ => {
         req.flash('success_message', 'Post was created successfuly: ' + title)
         res.redirect('/admin/posts')
@@ -58,7 +64,10 @@ router.get('/edit/:id', (req, res) => {
   Post.findById(req.params.id).lean()
     .then(post => {
       if(!post) { res.send('Cant find post') }
-      res.render('admin/posts/edit', {post: post})
+      Category.find({}).lean()
+      .then(categories => {
+        res.render('admin/posts/edit', {post, categories})
+      })
     })
     .catch(err => {
       res.send(err)
@@ -72,6 +81,7 @@ router.put('/edit/:id', (req, res) => {
       post.body = req.body.body
       post.status = req.body.status
       post.allowComments = req.body.allowComments == 'on'
+      post.category = req.body.category
       post.date = Date.now()
 
       if (req.files?.file) {

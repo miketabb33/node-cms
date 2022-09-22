@@ -1,15 +1,20 @@
 <div class="row">
-  <form action="/admin/fake-posts" method="post">
-    <h1>Create Posts</h1>
-    <div class="form-group">
-      <input type="number" class="form-control" name="amount"/>
-    </div>
-    <button class="btn btn-success" type="submit">Generate Posts</button>
-  </form>
+  <div class="col-sm-8">
+    <form action="/admin/fake-posts" method="post">
+      <h1>Create Posts</h1>
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" class="form-control" name="amount"/>
+      </div>
+      <button class="btn btn-success" type="submit">Generate Posts</button>
+    </form>
+  </div>
 </div>
 <br>
 <div class="row">
-  <form action="/admin/fake-posts?_method=DELETE" method="post">
-    <button class="btn btn-danger" type="submit">Delete All</button>
-  </form>
+  <div class="col-sm-8">
+    <form action="/admin/fake-posts?_method=DELETE" method="post">
+      <button class="btn btn-danger" type="submit">Delete All</button>
+    </form>
+  </div>
 </div>

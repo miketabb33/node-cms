@@ -50,6 +50,7 @@ app.set('view engine', '.hbs');
 app.use('/', require('./routes/home-routes.js'))
 app.use('/admin', require('./routes/admin-routes.js'))
 app.use('/admin/posts', require('./routes/posts-routes.js'))
+app.use('/admin/categories', require('./routes/categories-routes.js'))
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)

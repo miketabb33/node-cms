@@ -1,6 +1,7 @@
 const express = require('express')
 const Post = require('../models/Post')
 const router = express.Router()
+const Category = require('../models/Category')
 
 router.all('/*', (req, res, next) => {
   req.app.locals.layout = 'home-layout'
@@ -10,7 +11,10 @@ router.all('/*', (req, res, next) => {
 router.get('/', (req, res) => {
   Post.find({}).lean()
   .then(posts => {
-    res.render('home/index', { posts })
+    Category.find({}).lean()
+    .then(categories => {
+      res.render('home/index', { posts, categories })
+    })
   })
   .catch(err => {
     res.send('Cant find posts')
@@ -32,8 +36,10 @@ router.get('/register', (req, res) => {
 router.get('/show/:id', (req, res) => {
   Post.findById(req.params.id).lean()
   .then(post => {
-    console.log('id: ', post)
-    res.render('home/show', {post})
+    Category.find({}).lean()
+    .then(categories => {
+      res.render('home/show', {post, categories})
+    })
   })
 })
 
