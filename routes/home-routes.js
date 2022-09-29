@@ -4,6 +4,8 @@ const router = express.Router()
 const Category = require('../models/Category')
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
 
 router.all('/*', (req, res, next) => {
   req.app.locals.layout = 'home-layout'
@@ -29,6 +31,47 @@ router.get('/about', (req, res) => {
 
 router.get('/login', (req, res) => {
   res.render('home/login')
+})
+
+passport.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
+  User.findOne({email})
+  .then(user => {
+    if (!user) {
+      done(null, false, {message: 'No user found'})
+    } else {
+      bcrypt.compare(password, user.password, (err, matched) => {
+        if (err) throw err
+        if (matched) {
+          return done(null, user)
+        } else {
+          return done(null, false, {message: 'Wrong password'})
+        }
+      })
+    }
+  })
+}))
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/admin',
+    failureRedirect: '/login',
+    failureFlash: true
+  })(req,res,next)
+})
+
+router.get('/logout', (req, res) => {
+  req.logOut((err) => {
+    if(err)console.log(err)
+  })
+  res.redirect('/login')
 })
 
 router.get('/register', (req, res) => {

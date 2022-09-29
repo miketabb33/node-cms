@@ -30,6 +30,11 @@ const PostSchema = mongoose.Schema({
     type: String
   },
 
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }],
+
   date: {
     type: Date,
     default: Date.now()

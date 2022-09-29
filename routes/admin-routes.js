@@ -3,8 +3,9 @@ const Post = require('../models/Post')
 const faker = require('@faker-js/faker').faker
 const router = express.Router()
 const { removeAllUploads } = require('../core/imageUploader')
+const { userAuthenticated } = require('../core/authentication')
 
-router.all('/*', (req, res, next) => {
+router.all('/*', userAuthenticated, (req, res, next) => {
   req.app.locals.layout = 'admin-layout'
   next()
 })
