@@ -1,5 +1,6 @@
 const express = require('express')
 const Post = require('../models/Post')
+const Comment = require('../models/Comment')
 const faker = require('@faker-js/faker').faker
 const router = express.Router()
 const { removeAllUploads } = require('../core/imageUploader')
@@ -22,6 +23,7 @@ router.post('/fake-posts', (req, res) => {
     const statuses = ["Public","Private", "Draft"]
     post.status = statuses[Math.floor(Math.random()*statuses.length)]
     post.allowComments = Math.random() > 0.5 
+    post.user = req.user
 
     post.save()
     .then(_ => {
@@ -37,9 +39,13 @@ router.post('/fake-posts', (req, res) => {
 router.delete('/fake-posts', (req, res) => {
   removeAllUploads()
 
+
   Post.remove({})
   .then(_ => {
-    res.redirect('/admin/posts')
+    Comment.remove({})
+    .then(_ => {
+      res.redirect('/admin/posts')
+    })
   })
   .catch(err => {
     console.log(err)

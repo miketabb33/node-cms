@@ -125,7 +125,7 @@ router.post('/register', (req, res) => {
 })
 
 router.get('/show/:id', (req, res) => {
-  Post.findById(req.params.id).lean()
+  Post.findById(req.params.id).populate({path: 'comments', populate: {path: 'user'}}).populate('user').lean()
   .then(post => {
     Category.find({}).lean()
     .then(categories => {

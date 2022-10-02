@@ -5,7 +5,11 @@ const Comment = require('../models/Comment')
 
 
 router.get('/', (req, res) => {
-  res.render('admin/comments/index')
+  console.log(req.user._id)
+  Comment.find({user: req.user._id}).populate('user').lean()
+  .then(comments => {
+    res.render('admin/comments/index', {comments})
+  })
 })
 
 router.post('/', (req, res) => {
@@ -29,5 +33,14 @@ router.post('/', (req, res) => {
   })
 })
 
+router.delete('/:id', (req, res) => {
+  const commentId = req.params.id
+  Comment.findOneAndRemove({_id: commentId})
+  .then(deletedComment => {
+    Post.findOneAndUpdate({comments: commentId}, {$pull: {comments: commentId}}, (err, data) => {
+      res.redirect('/admin/comments')
+    })
+  })
+})
 
 module.exports = router

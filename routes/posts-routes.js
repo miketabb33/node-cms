@@ -18,7 +18,7 @@ const validateCreate = (body) => {
 }
 
 router.get('/', (req, res) => {
-  Post.find({}).populate('category').lean()
+  Post.find({}).populate('category').populate('user').lean()
     .then(posts => {
       res.render('admin/posts/index', { posts: posts })
     })
@@ -46,8 +46,9 @@ router.post('/create', (req, res) => {
     const fileName = uploadFileUnlessNull(req.files?.file)
     const category = req.body.category
     const date = Date.now()
+    const user = req.user
   
-    Post.create({title, body, status, allowComments, fileName, category, date})
+    Post.create({user, title, body, status, allowComments, fileName, category, date})
       .then(_ => {
         req.flash('success_message', 'Post was created successfuly: ' + title)
         res.redirect('/admin/posts')
@@ -105,8 +106,13 @@ router.put('/edit/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  Post.findById(req.params.id)
+  Post.findById(req.params.id).populate('comments')
   .then(post => {
+    
+    post.comments.forEach(comment => {
+      comment.remove()
+    })
+
     removeFile(post.fileName)
     post.remove()
     .then(_ => {

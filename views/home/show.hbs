@@ -8,8 +8,7 @@
 
     <!-- Author -->
     <p class="lead">
-      by
-      <a href="#">Start Bootstrap</a>
+      by {{ post.user.firstName }} {{ post.user.lastName }}
     </p>
 
     <hr>
@@ -27,56 +26,40 @@
     <!-- Post Content -->
     <p class="lead">{{post.body}}</p>
     <hr>
-
-    <!-- Comments Form -->
-    <div class="card my-4">
-      <h5 class="card-header">Leave a Comment:</h5>
-      <div class="card-body">
-        <form action="/admin/comments" method="post">
-          <div class="form-group">
-            <textarea name="body" class="form-control" rows="3"></textarea>
-            <input type="hidden" name="id" value={{post._id}}>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Single Comment -->
-    <div class="media mb-4">
-      <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-      <div class="media-body">
-        <h5 class="mt-0">Commenter Name</h5>
-        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-      </div>
-    </div>
-
-    <!-- Comment with nested comments -->
-    <div class="media mb-4">
-      <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-      <div class="media-body">
-        <h5 class="mt-0">Commenter Name</h5>
-        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-        <div class="media mt-4">
-          <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-          <div class="media-body">
-            <h5 class="mt-0">Commenter Name</h5>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+    {{#if user}}
+      {{#if post.allowComments }}
+        <!-- Comments Form -->
+        <div class="card my-4">
+          <h5 class="card-header">Leave a Comment:</h5>
+          <div class="card-body">
+            <form action="/admin/comments" method="post">
+              <div class="form-group">
+                <textarea name="body" class="form-control" rows="3"></textarea>
+                <input type="hidden" name="id" value={{post._id}}>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
           </div>
         </div>
+      {{else}}
+        <h2>Comments not allowed</h2>
+      {{/if}}
+    {{else}}
+      <h2>Log in to comment</h2>
+    {{/if}}
+    
+    <hr>
 
-        <div class="media mt-4">
-          <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-          <div class="media-body">
-            <h5 class="mt-0">Commenter Name</h5>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-          </div>
+    {{#each post.comments }}
+      <div class="media mb-4">
+        <img class="d-flex mr-3 rounded-circle" width="50" height="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/1362px-Placeholder_view_vector.svg.png" alt="">
+        <div class="media-body">
+          <h5 class="mt-0">{{user.firstName}} {{user.lastName}}</h5>
+          {{body}}
+          
         </div>
-
       </div>
-    </div>
-
+    {{/each}}
   </div>
 
   {{> home/sidebar }}
