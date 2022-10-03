@@ -13,11 +13,19 @@ router.all('/*', (req, res, next) => {
 })
 
 router.get('/', (req, res) => {
-  Post.find({}).lean()
+  const perPage = 10
+  const page = parseInt(req.query.page || 1)
+
+  Post.find({}).skip((perPage*page)-perPage).limit(perPage).lean()
   .then(posts => {
-    Category.find({}).lean()
-    .then(categories => {
-      res.render('home/index', { posts, categories })
+
+    Post.count()
+    .then(postCount => {
+      Category.find({}).lean()
+      .then(categories => {
+        const pages = Math.ceil(postCount / perPage)
+        res.render('home/index', { posts, categories, current: page, pages })
+      })
     })
   })
   .catch(err => {
@@ -124,8 +132,8 @@ router.post('/register', (req, res) => {
   }
 })
 
-router.get('/show/:id', (req, res) => {
-  Post.findById(req.params.id).populate({path: 'comments', match: {allowComment: true}, populate: {path: 'user'}})
+router.get('/show/:slug', (req, res) => {
+  Post.findOne({slug: req.params.slug}).populate({path: 'comments', match: {allowComment: true}, populate: {path: 'user'}})
   .populate('user').lean()
   .then(post => {
     Category.find({}).lean()
