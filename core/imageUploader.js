@@ -32,8 +32,6 @@ const removeFile = (fileName) => {
     if (err) throw err;
   
     for (const file of files) {
-      console.log(fileName)
-      console.log(file)
       if (file == fileName) {
         fs.unlink(path.join(uploadDir, file), err => {
           if (err) throw err;

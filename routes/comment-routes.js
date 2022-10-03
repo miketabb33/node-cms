@@ -5,7 +5,6 @@ const Comment = require('../models/Comment')
 
 
 router.get('/', (req, res) => {
-  console.log(req.user._id)
   Comment.find({user: req.user._id}).populate('user').lean()
   .then(comments => {
     res.render('admin/comments/index', {comments})
@@ -17,7 +16,6 @@ router.post('/', (req, res) => {
   const postId = req.body.id
   const userId = req.user._id
 
-
   Comment.create({
     user: userId,
     body: body
@@ -27,6 +25,7 @@ router.post('/', (req, res) => {
     .then(post => {
       post.comments.push(newComment)
       post.save(savedPost => {
+        req.flash('success_message', "Comment approval pending")
         res.redirect(`/show/${post._id}`)
       })
     })
@@ -41,6 +40,28 @@ router.delete('/:id', (req, res) => {
       res.redirect('/admin/comments')
     })
   })
+})
+
+router.post('/approve-comment/:id', (req, res) => {
+  const commentId = req.params.id
+  const value = req.body.value
+  Comment.findById(commentId)
+  .then(comment => {
+    comment.allowComment = value
+
+    comment.save()
+    .then(_ => {
+      res.status(201).send("Update Successful")
+    })
+    .catch(err => {
+      res.status(404).send(err)
+    })
+  })
+  .catch(err => {
+    res.status(404).send(err)
+  })
+
+  
 })
 
 module.exports = router

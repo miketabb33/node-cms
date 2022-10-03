@@ -5,6 +5,7 @@ const faker = require('@faker-js/faker').faker
 const router = express.Router()
 const { removeAllUploads } = require('../core/imageUploader')
 const { userAuthenticated } = require('../core/authentication')
+const Category = require('../models/Category')
 
 router.all('/*', userAuthenticated, (req, res, next) => {
   req.app.locals.layout = 'admin-layout'
@@ -12,7 +13,16 @@ router.all('/*', userAuthenticated, (req, res, next) => {
 })
 
 router.get('/', (req, res) => {
-  res.render('admin/index')
+  Post.count()
+  .then(postCount => {
+    Category.count()
+    .then(categoryCount => {
+      Comment.count()
+      .then(commentCount => {
+        res.render('admin/index', { postCount, categoryCount, commentCount })
+      })
+    })
+  })
 })
 
 router.post('/fake-posts', (req, res) => {
@@ -27,7 +37,6 @@ router.post('/fake-posts', (req, res) => {
 
     post.save()
     .then(_ => {
-      console.log("success")
     })
     .catch(err => {
       console.log(err)

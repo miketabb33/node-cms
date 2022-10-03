@@ -15,6 +15,11 @@ const CommentSchema = mongoose.Schema({
   date: {
     type: Date,
     default: Date.now()
+  },
+
+  allowComment: {
+    type: Boolean,
+    default: false
   }
 })
 
