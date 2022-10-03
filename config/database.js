@@ -1,6 +1,6 @@
 if(process.env.NODE_ENV == 'production') {
   module.exports = {
-    mongoDbUrl: 'mongodb+srv://udemy_cms:edQRMLgHpOlnr39J@cluster0.tnava24.mongodb.net/test'
+    mongoDbUrl: process.env.MONGO_DB_URI
   } 
 } else {
   module.exports = {
