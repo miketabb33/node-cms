@@ -26,7 +26,7 @@ router.post('/', (req, res) => {
       post.comments.push(newComment)
       post.save(savedPost => {
         req.flash('success_message', "Comment approval pending")
-        res.redirect(`/show/${post._id}`)
+        res.redirect(`/show/${post.slug}`)
       })
     })
   })
